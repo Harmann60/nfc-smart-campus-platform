@@ -29,3 +29,88 @@ This project proposes a **Software-as-a-Service (SaaS)** solution that integrate
 
 ## 🏗️ System Architecture
 
+All business logic, security, and data storage are handled on the backend.  
+Client devices act only as secure interfaces.
+
+---
+
+## 🧰 Tech Stack
+
+### Backend
+- Python
+- FastAPI
+- SQLite / PostgreSQL
+- REST APIs
+
+### Frontend
+- HTML, CSS, JavaScript
+- React (planned)
+
+### NFC Integration
+- USB NFC Reader (ACR122U / compatible)
+- Python NFC libraries
+
+### Deployment (Planned)
+- Docker
+- Cloud hosting (AWS / Render / Railway)
+
+---
+
+## 🧪 Modules
+
+### 1. Canteen Module
+- Item selection
+- NFC-based payment
+- Wallet balance deduction
+- Transaction logging
+
+### 2. Attendance Module
+- Tap-based attendance marking
+- Time-bound validation
+- Attendance reports
+
+### 3. Library Module
+- Book issue/return using NFC
+- Due date tracking
+- Student-library mapping
+
+---
+
+## 🔐 Security Considerations
+
+- No sensitive data stored on NFC cards
+- NFC cards used only for UID identification
+- All validations handled on backend
+- Role-based access control (planned)
+
+---
+
+## 👥 Team Members
+
+- **Harman**  
+- **Jalaj**  
+- **Gauri**
+
+---
+
+## 📅 Project Status
+
+🟡 In Development  
+Currently implementing core SaaS backend and NFC integration.
+
+---
+
+## 📌 Future Scope
+
+- Mobile application
+- Analytics dashboard
+- Integration with ERP systems
+- Biometric + NFC hybrid authentication
+- Multi-campus SaaS deployment
+
+---
+
+## 📜 License
+
+This project is developed for academic purposes under PBL guidelines.
+
