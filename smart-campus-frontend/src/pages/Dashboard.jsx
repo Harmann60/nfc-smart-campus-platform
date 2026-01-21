@@ -1,12 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
-  const [logs, setLogs] = useState([]); // 👈 NEW: Store the logs
+  const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // SCANNER STATE
+  const [scanMode, setScanMode] = useState('ATTENDANCE'); // Default mode
+  const [scannedId, setScannedId] = useState('');
+  const searchInputRef = useRef(null); // To keep focus on the input
 
   // Form State
   const [formData, setFormData] = useState({
@@ -22,7 +27,7 @@ const Dashboard = () => {
   const fetchData = async () => {
     try {
       const usersRes = await axios.get('http://localhost:5000/api/auth/users');
-      const logsRes = await axios.get('http://localhost:5000/api/nfc/logs'); // 👈 Fetch logs
+      const logsRes = await axios.get('http://localhost:5000/api/nfc/logs');
       setUsers(usersRes.data);
       setLogs(logsRes.data);
       setLoading(false);
@@ -34,10 +39,38 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-    // Optional: Auto-refresh every 5 seconds to see live taps
-    const interval = setInterval(fetchData, 5000);
+    const interval = setInterval(fetchData, 2000); // Faster refresh for live scanning
     return () => clearInterval(interval);
   }, []);
+
+  // 2. HANDLE USB SCANNER INPUT
+  // When reader types ID + Enter, this function runs automatically
+  const handleScanSubmit = async (e) => {
+    e.preventDefault();
+    if (!scannedId) return;
+
+    // Send to Backend
+    try {
+      await axios.post('http://localhost:5000/api/nfc/scan', {
+        rfid_uid: scannedId,
+        type: scanMode,
+        amount: scanMode === 'PAYMENT' ? 20 : 0 // Default $20 for demo payment
+      });
+      // Clear input for next scan
+      setScannedId('');
+      fetchData();
+      // Keep focus so you can scan again immediately
+      searchInputRef.current.focus();
+    } catch (err) {
+      console.error("Scan failed");
+      setScannedId('');
+    }
+  };
+
+  // Ensure input always has focus when you click anywhere (Optional Kiosk feel)
+  const keepFocus = () => {
+    if(searchInputRef.current) searchInputRef.current.focus();
+  }
 
   // Handle Register
   const handleRegister = async (e) => {
@@ -76,18 +109,55 @@ const Dashboard = () => {
   };
 
   return (
-      <div className="min-h-screen bg-gray-100 p-8">
+      <div className="min-h-screen bg-gray-100 p-8" onClick={keepFocus}>
         <div className="max-w-7xl mx-auto space-y-8">
 
           {/* Header */}
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-gray-800">Smart Campus Admin</h1>
-              <p className="text-gray-600">Live Monitoring System</p>
+              <p className="text-gray-600">USB Reader Connected</p>
             </div>
             <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
               Logout
             </button>
+          </div>
+
+          {/* 🔴 NEW: USB SCANNER TERMINAL */}
+          <div className="bg-blue-900 text-white p-6 rounded-lg shadow-xl border-2 border-blue-500">
+            <h2 className="text-xl font-bold mb-4 flex items-center">
+              📡 ACTIVE SCANNER TERMINAL
+              <span className="ml-2 text-xs bg-green-500 px-2 py-1 rounded text-white animate-pulse">LIVE</span>
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-blue-200 mb-1">Select Scanner Mode</label>
+                <div className="flex space-x-2">
+                  {['ATTENDANCE', 'LIBRARY', 'PAYMENT'].map(mode => (
+                      <button
+                          key={mode}
+                          onClick={() => { setScanMode(mode); searchInputRef.current.focus(); }}
+                          className={`px-4 py-2 rounded font-bold ${scanMode === mode ? 'bg-white text-blue-900' : 'bg-blue-800 text-blue-300'}`}
+                      >
+                        {mode}
+                      </button>
+                  ))}
+                </div>
+              </div>
+
+              <form onSubmit={handleScanSubmit}>
+                <label className="block text-sm text-blue-200 mb-1">Scan Card Here (Auto-Detect)</label>
+                <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={scannedId}
+                    onChange={(e) => setScannedId(e.target.value)}
+                    placeholder="Waiting for tap..."
+                    className="w-full text-black px-4 py-3 text-lg rounded border-4 border-blue-400 focus:border-yellow-400 outline-none font-mono"
+                    autoFocus
+                />
+              </form>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -103,7 +173,7 @@ const Dashboard = () => {
                   <input type="text" placeholder="Name" className="w-full border p-2 rounded" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                   <input type="email" placeholder="Email" className="w-full border p-2 rounded" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
                   <input type="password" placeholder="Password" className="w-full border p-2 rounded" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
-                  <input type="text" placeholder="RFID UID" className="w-full border p-2 rounded" value={formData.rfid_uid} onChange={e => setFormData({...formData, rfid_uid: e.target.value})} />
+                  <input type="text" placeholder="RFID UID (Scan to fill)" className="w-full border p-2 rounded" value={formData.rfid_uid} onChange={e => setFormData({...formData, rfid_uid: e.target.value})} />
                   <button className="w-full bg-blue-600 text-white py-2 rounded">Register</button>
                 </form>
               </div>
