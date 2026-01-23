@@ -112,5 +112,5 @@ Currently implementing core SaaS backend and NFC integration.
 
 ## 📜 License
 
-This project is developed for academic purposes under PBL guidelines.
+This project is developed for academic purposes under MIT License 
 
