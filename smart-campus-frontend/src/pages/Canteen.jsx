@@ -46,7 +46,15 @@ const Canteen = () => {
             alert(`Payment Successful!`);
             setCart([]);
             setScannedId('');
-        } catch (err) { alert('Transaction Failed'); }
+        } catch (err) {
+    const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'Transaction Failed';
+
+    alert(msg);
+}
+
     };
 
     const handleAddItem = (e) => {
@@ -96,6 +104,7 @@ const Canteen = () => {
                                     <option value="burger">Burger</option>
                                     <option value="sandwich">Sandwich</option>
                                     <option value="pizza">Pizza</option>
+                                    <option value="vadapav">Vada Pav</option>
                                 </select>
                                 <button className="bg-campus-text text-white px-6 rounded-xl font-bold hover:opacity-90">Add</button>
                             </form>
@@ -147,6 +156,7 @@ const Canteen = () => {
                                         />
                                         <CreditCard className="absolute right-4 top-4 text-gray-400 opacity-50" />
                                     </div>
+                                    
                                 </form>
                             </div>
                         </div>

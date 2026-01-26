@@ -3,6 +3,7 @@ const AccessLog = require('../models/AccessLog');
 
 // 1. Main Scan Function
 exports.scanCard = async (req, res) => {
+
     const { rfid_uid, type = 'ATTENDANCE', amount = 0 } = req.body;
 
     if (!rfid_uid) return res.status(400).json({ error: 'RFID UID is required' });
@@ -22,17 +23,46 @@ exports.scanCard = async (req, res) => {
         }
 
         // SCENARIO 2: PAYMENT
-        if (type === 'PAYMENT') {
-            if (user.wallet_balance >= amount) {
-                user.wallet_balance -= amount;
-                await user.save();
-                await AccessLog.create({ rfid_uid, scan_type: 'PAYMENT', amount, status: 'GRANTED', user_name: user.name });
-                return res.json({ message: `Payment Successful! -$${amount}`, new_balance: user.wallet_balance });
-            } else {
-                await AccessLog.create({ rfid_uid, scan_type: 'PAYMENT', amount, status: 'DENIED', user_name: user.name });
-                return res.status(400).json({ message: 'Insufficient Funds!', balance: user.wallet_balance });
-            }
-        }
+        // SCENARIO 2: CANTEEN PAYMENT
+if (type === 'CANTEEN_PAYMENT') {
+
+    if (user.role !== 'student') {
+        return res.status(403).json({ message: 'Only students can make payments' });
+    }
+
+    if (user.wallet_balance >= amount) {
+        user.wallet_balance -= amount;
+        await user.save();
+
+        await AccessLog.create({
+            rfid_uid,
+            scan_type: 'CANTEEN_PAYMENT',
+            amount,
+            status: 'GRANTED',
+            user_name: user.name
+        });
+
+        return res.json({
+            message: `Payment Successful! -₹${amount}`,
+            new_balance: user.wallet_balance
+        });
+
+    } else {
+        await AccessLog.create({
+            rfid_uid,
+            scan_type: 'CANTEEN_PAYMENT',
+            amount,
+            status: 'DENIED',
+            user_name: user.name
+        });
+
+        return res.status(400).json({
+            message: 'Insufficient Funds!',
+            balance: user.wallet_balance
+        });
+    }
+}
+
 
         // SCENARIO 3: LIBRARY
         if (type === 'LIBRARY') {
