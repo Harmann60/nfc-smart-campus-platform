@@ -89,7 +89,6 @@ Client devices act only as secure interfaces.
 
 - **Harman**  
 - **Jalaj**  
-- **Gauri**
 
 ---
 
