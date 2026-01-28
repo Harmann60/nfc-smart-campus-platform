@@ -1,17 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
-import {
-    LayoutDashboard, Coffee, BookOpen, CalendarDays,
-    LogOut, Moon, Sun
-} from 'lucide-react';
+import { LayoutDashboard, Coffee, BookOpen, CalendarDays, LogOut } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 const Sidebar = () => {
     const location = useLocation();
-    const { theme, toggleTheme } = useTheme();
+    const { theme, changeTheme } = useTheme();
 
     const menu = [
         { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
-        // Removed Users page
         { name: 'Attendance', path: '/attendance', icon: <CalendarDays size={20} /> },
         { name: 'Library', path: '/library', icon: <BookOpen size={20} /> },
         { name: 'Smart Canteen', path: '/canteen', icon: <Coffee size={20} /> },
@@ -25,11 +21,12 @@ const Sidebar = () => {
     return (
         <div className="h-screen w-64 bg-campus-card border-r border-campus-border flex flex-col fixed left-0 top-0 transition-colors duration-300">
 
+            {/* Header */}
             <div className="p-8 flex items-center gap-3">
-                <div className="w-8 h-8 bg-campus-primary rounded-lg"></div>
-                <h1 className="text-2xl font-extrabold text-campus-text tracking-tight">Campus<span className="text-campus-secondary">ID</span></h1>
+                <h1 className="text-2xl font-extrabold text-campus-text tracking-tight">Iden<span className="text-campus-secondary">ta</span></h1>
             </div>
 
+            {/* Menu */}
             <nav className="flex-1 px-4 space-y-2 mt-4">
                 {menu.map((item) => {
                     const isActive = location.pathname === item.path;
@@ -50,15 +47,40 @@ const Sidebar = () => {
                 })}
             </nav>
 
-            <div className="p-4 border-t border-campus-border space-y-2">
-                <button
-                    onClick={toggleTheme}
-                    className="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-campus-secondary hover:bg-campus-bg hover:text-campus-text transition-all"
-                >
-                    {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                    <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-                </button>
+            {/* THEME PICKER (Simple Colored Circles) */}
+            <div className="p-6 border-t border-campus-border">
+                <p className="text-xs font-bold text-campus-secondary uppercase mb-3 tracking-wider">Theme</p>
+                <div className="flex gap-4">
 
+                    {/* LONDON (Navy) */}
+                    <button
+                        onClick={() => changeTheme('london')}
+                        className={`w-8 h-8 rounded-full bg-[#061E29] border-2 transition-transform hover:scale-110 
+              ${theme === 'london' ? 'border-[#5F9598] scale-110 ring-2 ring-offset-2 ring-[#5F9598]' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                        title="London (Dark)"
+                    />
+
+                    {/* TOKYO (Pastel) */}
+                    <button
+                        onClick={() => changeTheme('tokyo')}
+                        className={`w-8 h-8 rounded-full bg-[#A8DF8E] border-2 transition-transform hover:scale-110 
+              ${theme === 'tokyo' ? 'border-[#FFAAB8] scale-110 ring-2 ring-offset-2 ring-[#FFAAB8]' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                        title="Tokyo (Pastel)"
+                    />
+
+                    {/* HELSINKI (Blue) */}
+                    <button
+                        onClick={() => changeTheme('helsinki')}
+                        className={`w-8 h-8 rounded-full bg-[#3F72AF] border-2 transition-transform hover:scale-110 
+              ${theme === 'helsinki' ? 'border-[#DBE2EF] scale-110 ring-2 ring-offset-2 ring-[#DBE2EF]' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                        title="Helsinki (Light)"
+                    />
+
+                </div>
+            </div>
+
+            {/* Logout */}
+            <div className="p-4">
                 <button
                     onClick={handleLogout}
                     className="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-red-400 hover:bg-red-50 hover:text-red-500 transition-all"

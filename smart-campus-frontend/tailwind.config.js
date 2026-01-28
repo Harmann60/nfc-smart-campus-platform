@@ -4,18 +4,17 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class', // <--- IMPORTANT: Enables toggling via class
+  darkMode: ['class', '[data-theme="london"]'], // Optional: helps some plugins
   theme: {
     extend: {
       colors: {
-        campus: {
-          bg: 'var(--bg-main)',       // Auto-switches
-          card: 'var(--bg-card)',     // Auto-switches
-          text: 'var(--text-main)',   // Auto-switches
-          secondary: 'var(--text-muted)',
-          border: 'var(--border-color)',
-          primary: 'var(--accent)',
-        }
+        // These map directly to the variables in index.css
+        'campus-bg': 'var(--bg-main)',
+        'campus-card': 'var(--bg-card)',
+        'campus-text': 'var(--text-main)',
+        'campus-secondary': 'var(--text-muted)',
+        'campus-border': 'var(--border-color)',
+        'campus-primary': 'var(--accent)',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
