@@ -13,65 +13,68 @@ const Login = () => {
     setError('');
 
     try {
-      // connecting to your backend running on port 5000
       const res = await axios.post('http://localhost:5000/api/auth/login', {
         email,
         password
       });
 
-      // Save the token (the key) in local storage
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('role', res.data.role);
 
-      // If successful, go to the dashboard
       navigate('/dashboard');
-      
+
     } catch (err) {
       setError(err.response?.data?.msg || 'Login failed');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-96">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Admin Login</h2>
-        
-        {error && <div className="bg-red-100 text-red-700 p-2 rounded mb-4 text-sm">{error}</div>}
+      // 1. Replaced 'bg-gray-900' with 'bg-campus-bg' so it adapts to theme
+      <div className="min-h-screen flex items-center justify-center bg-campus-bg transition-colors duration-300 font-sans">
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-              placeholder="admin@college.edu"
-              required
-            />
-          </div>
+        {/* 2. Replaced 'bg-white' with 'bg-campus-card' and added dynamic border */}
+        <div className="bg-campus-card p-8 rounded-2xl shadow-xl w-96 border border-campus-border transition-colors duration-300">
 
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-              placeholder="********"
-              required
-            />
-          </div>
+          {/* 3. Text colors changed to 'text-campus-text' */}
+          <h2 className="text-3xl font-extrabold text-center text-campus-text mb-8">Admin Login</h2>
 
-          <button 
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"
-          >
-            Login
-          </button>
-        </form>
+          {error && <div className="bg-red-100 text-red-700 p-3 rounded-xl mb-6 text-sm font-bold text-center">{error}</div>}
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-campus-secondary text-xs font-bold uppercase mb-2">Email</label>
+              {/* 4. Inputs now use 'bg-campus-bg' so they are visible in Dark Mode */}
+              <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 bg-campus-bg border border-campus-border rounded-xl text-campus-text outline-none focus:border-campus-primary transition-all"
+                  placeholder="admin@college.edu"
+                  required
+              />
+            </div>
+
+            <div>
+              <label className="block text-campus-secondary text-xs font-bold uppercase mb-2">Password</label>
+              <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 bg-campus-bg border border-campus-border rounded-xl text-campus-text outline-none focus:border-campus-primary transition-all"
+                  placeholder="********"
+                  required
+              />
+            </div>
+
+            <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition duration-200 shadow-lg"
+            >
+              Sign In
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
   );
 };
 

@@ -1,3 +1,62 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        /* ------------------------------------------------ */
+        /* LIGHT THEME (Warm Pink Palette)                  */
+        /* Source: https://colorhunt.co/palette/fcf8f8...   */
+        /* ------------------------------------------------ */
+
+        /* Main Background: Almost White/Pink */
+        --bg-main: #FCF8F8;
+
+        /* Card Background: White (Cleaner than #FBEFEF for text) */
+        --bg-card: #FFFFFF;
+
+        /* Text: Dark Grey (For contrast against light pink) */
+        --text-main: #4A4A4A;
+
+        /* Secondary Text: Muted Pinkish Grey */
+        --text-muted: #9CA3AF;
+
+        /* Borders: Soft Pink */
+        --border-color: #F9DFDF;
+
+        /* ACCENT: The "Salmon Pink" (#F5AFAF) - Buttons/Highlights */
+        --accent: #F5AFAF;
+    }
+
+    .dark {
+        /* ------------------------------------------------ */
+        /* DARK THEME (Deep Navy & Teal Palette)            */
+        /* Source: https://colorhunt.co/palette/061e29...   */
+        /* ------------------------------------------------ */
+
+        /* Main Background: Deep Navy */
+        --bg-main: #061E29;
+
+        /* Card Background: Deep Teal Blue */
+        --bg-card: #1D546D;
+
+        /* Text: White (From palette #F3F4F4) */
+        --text-main: #F3F4F4;
+
+        /* Secondary Text: Muted Teal */
+        --text-muted: #5F9598;
+
+        /* Borders: Slightly lighter Teal */
+        --border-color: #2A6F8F;
+
+        /* ACCENT: Bright Teal (#5F9598) or maybe contrast?
+           Let's use the palette's Teal (#5F9598) as the primary brand color here. */
+        --accent: #5F9598;
+    }
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
