@@ -16,3 +16,8 @@ Thumbs.db
 # Editor files
 .idea/
 .vscode/
+
+# Ignore SQLite databases
+*.sqlite
+*.db
+*.sqlite3
