@@ -1,113 +1,173 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
-import { BookOpen, RotateCcw, AlertCircle, Save, Search, CheckCircle, XCircle } from 'lucide-react';
+import { Book, User, Clock, ShieldCheck, TrendingUp, ArrowRight } from 'lucide-react';
 
 const Library = () => {
-    const [logs, setLogs] = useState([]);
-    const [rfid, setRfid] = useState('');
-    const [bookTitle, setBookTitle] = useState('');
-    const [mode, setMode] = useState('ISSUE');
-    const rfidInputRef = useRef(null);
+    const [activeStudent, setActiveStudent] = useState(null);
+    const [status, setStatus] = useState('idle');
+    const [message, setMessage] = useState('Scan Student ID');
+    const [scannedId, setScannedId] = useState('');
+    const [logs, setLogs] = useState([]); // For real-time library logs
+    const searchInputRef = useRef(null);
 
+    // Fetch library-specific logs
     const fetchLogs = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/nfc/logs');
-            setLogs(res.data.filter(log => log.scan_type === 'LIBRARY'));
+            const res = await axios.get('http://localhost:5000/api/library/logs'); // Make sure this endpoint exists
+            setLogs(res.data);
         } catch (err) { console.error(err); }
     };
 
-    useEffect(() => { fetchLogs(); const i = setInterval(fetchLogs, 2000); return () => clearInterval(i); }, []);
+    useEffect(() => { 
+        fetchLogs(); 
+        const i = setInterval(fetchLogs, 5000); 
+        return () => clearInterval(i); 
+    }, []);
 
-    const handleSubmit = async (e) => {
+    const handleScan = async (e) => {
         e.preventDefault();
-        if (!rfid) return alert("Please scan a Student ID");
+        const inputUid = scannedId;
+        setScannedId(''); // Clear immediately for next scan
+
         try {
-            await axios.post('http://localhost:5000/api/nfc/scan', {
-                rfid_uid: rfid, type: 'LIBRARY', amount: mode === 'FINE' ? 50 : 0
-            });
-            alert(`${mode} Successful!`);
-            setRfid(''); setBookTitle(''); fetchLogs(); rfidInputRef.current?.focus();
-        } catch(err) { alert('Transaction Failed'); }
+            if (!activeStudent) {
+                // STEP 1: Identify Student
+                setStatus('loading');
+                const res = await axios.post('http://localhost:5000/api/nfc/identify', { rfid_uid: inputUid });
+                setActiveStudent(res.data);
+                setMessage("Student Found! Now Scan Book.");
+                setStatus('idle');
+            } else {
+                // STEP 2: Issue/Return Book
+                setStatus('loading');
+                const res = await axios.post('http://localhost:5000/api/library/scan', {
+                    rfid_uid: inputUid,
+                    user_uid: activeStudent.rfid_uid
+                });
+                setMessage(res.data.message);
+                setStatus('success');
+                fetchLogs();
+                
+                setTimeout(() => {
+                    setActiveStudent(null);
+                    setMessage('Scan Student ID');
+                    setStatus('idle');
+                }, 3000);
+            }
+        } catch (err) {
+            setMessage(err.response?.data?.message || "Error occurred");
+            setStatus('error');
+            setTimeout(() => setStatus('idle'), 3000);
+        }
     };
 
     return (
-        <div className="flex bg-campus-bg min-h-screen font-sans text-campus-text transition-colors duration-300">
+        <div className="flex bg-campus-bg min-h-screen font-sans text-campus-text" onClick={() => searchInputRef.current.focus()}>
             <Sidebar />
-            <div className="ml-64 flex-1 p-8 h-screen flex flex-col">
+            
+            {/* The ml-64 matches your Attendance layout to prevent sidebar overlap */}
+            <div className="ml-64 flex-1 p-8">
 
-                <header className="mb-8">
-                    <h1 className="text-3xl font-extrabold text-campus-text">Library Desk</h1>
-                    <p className="text-campus-secondary text-sm">Book Circulation & Management</p>
-                </header>
-
-                <div className="grid grid-cols-12 gap-8 h-full">
-
-                    {/* LEFT: FORM */}
-                    <div className="col-span-7 bg-campus-card p-8 rounded-3xl shadow-sm border border-campus-border flex flex-col h-fit transition-colors">
-
-                        <div className="flex bg-campus-bg p-1 rounded-xl mb-8">
-                            <button onClick={() => setMode('ISSUE')} className={`flex-1 py-3 rounded-lg font-bold text-sm transition-all ${mode === 'ISSUE' ? 'bg-campus-card shadow-sm text-campus-text' : 'text-campus-secondary'}`}>Issue Book</button>
-                            <button onClick={() => setMode('RETURN')} className={`flex-1 py-3 rounded-lg font-bold text-sm transition-all ${mode === 'RETURN' ? 'bg-campus-card shadow-sm text-blue-600' : 'text-campus-secondary'}`}>Return Book</button>
-                            <button onClick={() => setMode('FINE')} className={`flex-1 py-3 rounded-lg font-bold text-sm transition-all ${mode === 'FINE' ? 'bg-campus-card shadow-sm text-red-500' : 'text-campus-secondary'}`}>Collect Fine</button>
+                <div className="flex justify-between items-end mb-8">
+                    <div>
+                        <h1 className="text-3xl font-extrabold text-campus-text">Library Desk</h1>
+                        <p className="text-campus-secondary">Dual-Scan Issue & Return System</p>
+                    </div>
+                    {/* Stat Box matching Attendance style */}
+                    <div className="bg-campus-card px-8 py-4 rounded-2xl shadow-sm border border-campus-border flex items-center gap-4">
+                        <div className="bg-campus-bg p-3 rounded-full text-campus-text"><TrendingUp size={24} /></div>
+                        <div>
+                            <p className="text-xs uppercase font-bold text-campus-secondary">Active Sessions</p>
+                            <p className="text-3xl font-bold text-campus-text">{activeStudent ? '1' : '0'}</p>
                         </div>
+                    </div>
+                </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            {mode === 'ISSUE' && (
-                                <div>
-                                    <label className="block text-xs font-bold uppercase text-campus-secondary mb-2">Book Title / ISBN</label>
-                                    <div className="relative">
-                                        <BookOpen className="absolute left-4 top-3.5 text-campus-secondary" size={20}/>
-                                        <input type="text" value={bookTitle} onChange={e => setBookTitle(e.target.value)} placeholder="Enter Book Name..."
-                                               className="w-full pl-12 pr-4 py-3 bg-campus-bg rounded-xl border border-campus-border text-campus-text focus:border-campus-primary outline-none transition" />
-                                    </div>
+                <div className="flex gap-8 h-[600px]">
+                    {/* 1/3 COLUMN: SCANNER */}
+                    <div className="w-1/3 flex flex-col">
+                        <div className="bg-campus-text rounded-3xl p-8 shadow-2xl text-campus-bg flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                            <div className="mb-8 p-6 rounded-full border-4 border-dashed border-campus-bg/30 animate-pulse">
+                                {activeStudent ? 
+                                    <Book size={64} className="text-campus-primary" /> : 
+                                    <ShieldCheck size={64} className="text-campus-primary" />
+                                }
+                            </div>
+                            
+                            <h2 className="text-2xl font-bold mb-2 text-white">
+                                {activeStudent ? "Scan Book ID" : "Scan Student ID"}
+                            </h2>
+                            <p className="text-white/70 mb-4">{message}</p>
+
+                            {activeStudent && (
+                                <div className="flex items-center gap-2 mb-6 bg-white/10 px-4 py-2 rounded-lg border border-white/20">
+                                    <span className="font-bold text-white text-sm">{activeStudent.name}</span>
+                                    <ArrowRight size={14} className="text-campus-primary" />
+                                    <span className="text-xs text-white/60 text-white">Student Loaded</span>
                                 </div>
                             )}
 
-                            <div>
-                                <label className="block text-xs font-bold uppercase text-campus-secondary mb-2">Student ID Card</label>
-                                <div className="relative">
-                                    <Search className="absolute left-4 top-3.5 text-campus-secondary" size={20}/>
-                                    <input ref={rfidInputRef} type="text" value={rfid} onChange={e => setRfid(e.target.value)} placeholder="Scan Card Here..." autoFocus
-                                           className="w-full pl-12 pr-4 py-3 bg-campus-bg rounded-xl border border-campus-border text-campus-text focus:border-campus-primary outline-none transition font-mono" />
+                            <form onSubmit={handleScan} className="w-full">
+                                <input 
+                                    ref={searchInputRef} 
+                                    type="text" 
+                                    value={scannedId} 
+                                    onChange={e => setScannedId(e.target.value)} 
+                                    placeholder="Waiting..." 
+                                    autoFocus
+                                    className="w-full bg-white/10 text-white text-xl py-4 text-center rounded-xl border border-white/20 outline-none focus:border-white transition" 
+                                />
+                            </form>
+
+                            {activeStudent && (
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); setActiveStudent(null); setMessage('Scan Student ID'); }}
+                                    className="mt-6 text-red-400 text-xs hover:underline"
+                                >
+                                    Cancel Transaction
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* 2/3 COLUMN: FINE POLICY (Replaces the List for now, or use for logs) */}
+                    <div className="w-2/3 bg-campus-card rounded-3xl shadow-sm border border-campus-border flex flex-col overflow-hidden">
+                        <div className="p-6 border-b border-campus-border bg-campus-bg/50 flex justify-between items-center">
+                            <h3 className="font-bold flex items-center gap-2 text-campus-text"><Clock size={18}/> Fine Policy & Rules</h3>
+                            <span className="text-xs font-bold bg-campus-primary text-campus-bg px-3 py-1 rounded-full">Active</span>
+                        </div>
+
+                        <div className="flex-1 p-8 space-y-6">
+                            <div className="flex justify-between items-center p-6 bg-green-50 rounded-2xl border border-green-100">
+                                <div>
+                                    <p className="font-bold text-green-800">Standard Period</p>
+                                    <p className="text-sm text-green-600">No charges apply for early returns</p>
                                 </div>
+                                <span className="text-2xl font-black text-green-700">7 Days</span>
                             </div>
 
-                            <button type="submit" className={`w-full py-4 rounded-xl font-bold text-white shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95
-                        ${mode === 'ISSUE' ? 'bg-campus-text hover:opacity-90' : mode === 'RETURN' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-red-500 hover:bg-red-600'}`}>
-                                {mode === 'ISSUE' && <><Save size={20}/> Confirm Issue</>}
-                                {mode === 'RETURN' && <><RotateCcw size={20}/> Confirm Return</>}
-                                {mode === 'FINE' && <><AlertCircle size={20}/> Charge ₹50 Fine</>}
-                            </button>
-                        </form>
-                    </div>
-
-                    {/* RIGHT: LOGS */}
-                    <div className="col-span-5 bg-campus-card rounded-3xl shadow-sm border border-campus-border flex flex-col overflow-hidden h-fit max-h-[600px] transition-colors">
-                        <div className="p-6 border-b border-campus-border bg-campus-bg/50">
-                            <h3 className="font-bold text-campus-secondary uppercase text-xs tracking-wider">Circulation History</h3>
-                        </div>
-                        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                            {logs.map(log => (
-                                <div key={log.id} className="flex items-center justify-between p-4 rounded-xl border border-campus-border hover:bg-campus-bg transition">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`p-2 rounded-full ${log.amount > 0 ? 'bg-red-100 text-red-500' : 'bg-green-100 text-green-500'}`}>
-                                            {log.amount > 0 ? <XCircle size={18}/> : <CheckCircle size={18}/>}
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-sm text-campus-text">{log.user_name}</p>
-                                            <p className="text-xs text-campus-secondary">{new Date(log.timestamp).toLocaleTimeString()}</p>
-                                        </div>
-                                    </div>
-                                    <span className="text-campus-text font-mono font-bold text-xs">{log.amount > 0 ? `-₹${log.amount}` : 'ISSUED'}</span>
+                            <div className="flex justify-between items-center p-6 bg-yellow-50 rounded-2xl border border-yellow-100">
+                                <div>
+                                    <p className="font-bold text-yellow-800">Late Return</p>
+                                    <p className="text-sm text-yellow-600">Applied from day 8 to 15</p>
                                 </div>
-                            ))}
+                                <span className="text-2xl font-black text-yellow-700">₹5 / day</span>
+                            </div>
+
+                            <div className="flex justify-between items-center p-6 bg-red-50 rounded-2xl border border-red-100">
+                                <div>
+                                    <p className="font-bold text-red-800">Severe Overdue</p>
+                                    <p className="text-sm text-red-600">Flat rate + daily charge after 15 days</p>
+                                </div>
+                                <span className="text-2xl font-black text-red-700">₹10 / day</span>
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     );
 };
+
 export default Library;

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Coffee, BookOpen, CalendarDays, LogOut } from 'lucide-react';
+import { LayoutDashboard, Coffee, BookOpen, CalendarDays, LogOut, History } from 'lucide-react'; // Added History icon
 import { useTheme } from '../context/ThemeContext';
 
 const Sidebar = () => {
@@ -10,6 +10,7 @@ const Sidebar = () => {
         { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
         { name: 'Attendance', path: '/attendance', icon: <CalendarDays size={20} /> },
         { name: 'Library', path: '/library', icon: <BookOpen size={20} /> },
+        { name: 'Library Logs', path: '/library-logs', icon: <History size={20} /> }, // New Option
         { name: 'Smart Canteen', path: '/canteen', icon: <Coffee size={20} /> },
     ];
 
@@ -47,35 +48,28 @@ const Sidebar = () => {
                 })}
             </nav>
 
-            {/* THEME PICKER (Simple Colored Circles) */}
+            {/* THEME PICKER */}
             <div className="p-6 border-t border-campus-border">
                 <p className="text-xs font-bold text-campus-secondary uppercase mb-3 tracking-wider">Theme</p>
                 <div className="flex gap-4">
-
-                    {/* LONDON (Navy) */}
                     <button
                         onClick={() => changeTheme('london')}
                         className={`w-8 h-8 rounded-full bg-[#061E29] border-2 transition-transform hover:scale-110 
               ${theme === 'london' ? 'border-[#5F9598] scale-110 ring-2 ring-offset-2 ring-[#5F9598]' : 'border-transparent opacity-70 hover:opacity-100'}`}
                         title="London (Dark)"
                     />
-
-                    {/* TOKYO (Pastel) */}
                     <button
                         onClick={() => changeTheme('tokyo')}
                         className={`w-8 h-8 rounded-full bg-[#A8DF8E] border-2 transition-transform hover:scale-110 
               ${theme === 'tokyo' ? 'border-[#FFAAB8] scale-110 ring-2 ring-offset-2 ring-[#FFAAB8]' : 'border-transparent opacity-70 hover:opacity-100'}`}
                         title="Tokyo (Pastel)"
                     />
-
-                    {/* HELSINKI (Blue) */}
                     <button
                         onClick={() => changeTheme('helsinki')}
                         className={`w-8 h-8 rounded-full bg-[#3F72AF] border-2 transition-transform hover:scale-110 
               ${theme === 'helsinki' ? 'border-[#DBE2EF] scale-110 ring-2 ring-offset-2 ring-[#DBE2EF]' : 'border-transparent opacity-70 hover:opacity-100'}`}
                         title="Helsinki (Light)"
                     />
-
                 </div>
             </div>
 

@@ -11,5 +11,6 @@ router.post('/topup', nfcController.topUpWallet);
 
 // 3. Route to get logs
 router.get('/logs', nfcController.getLogs);
+router.post('/identify', nfcController.identifyUser);
 
 module.exports = router;

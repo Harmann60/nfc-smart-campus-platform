@@ -1,5 +1,6 @@
-const sequelize = require('../config/db');
+const { sequelize } = require('../config/db');
 const User = require('./User');
+const LibraryTransaction = require('./LibraryTransaction'); // Import it just like User
 
 // Define Associations here later (e.g., User hasOne Wallet)
 
@@ -12,4 +13,5 @@ const syncDB = async () => {
     }
 };
 
-module.exports = { sequelize, syncDB, User };
+// Add LibraryTransaction to the exports so libraryRoutes.js can see it
+module.exports = { sequelize, syncDB, User, LibraryTransaction };

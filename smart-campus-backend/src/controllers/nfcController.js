@@ -101,3 +101,18 @@ exports.getLogs = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.identifyUser = async (req, res) => {
+  try {
+    const { rfid_uid } = req.body;
+    const user = await User.findOne({ where: { rfid_uid } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found. Register card first." });
+    }
+
+    res.json(user); // Sends back name, role, etc.
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
