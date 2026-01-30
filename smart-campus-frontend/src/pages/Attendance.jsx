@@ -38,6 +38,7 @@ const Attendance = () => {
                         <h1 className="text-3xl font-extrabold text-campus-text">Daily Attendance</h1>
                         <p className="text-campus-secondary">Gate Entry System</p>
                     </div>
+                    {/* Stats Card */}
                     <div className="bg-campus-card px-8 py-4 rounded-2xl shadow-sm border border-campus-border flex items-center gap-4 transition-colors">
                         <div className="bg-campus-bg p-3 rounded-full text-campus-text"><TrendingUp size={24} /></div>
                         <div>
@@ -48,17 +49,29 @@ const Attendance = () => {
                 </div>
 
                 <div className="flex gap-8 h-[600px]">
-                    {/* SCANNER */}
+
+                    {/* SCANNER - FIXED: Changed bg-campus-text to bg-campus-card so it matches the theme */}
                     <div className="w-1/3 flex flex-col">
-                        <div className="bg-campus-text rounded-3xl p-8 shadow-2xl text-campus-bg flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden">
-                            <div className="mb-8 p-6 rounded-full border-4 border-dashed border-campus-bg/30 animate-pulse">
+                        <div className="bg-campus-card rounded-3xl p-8 shadow-xl border border-campus-border flex-1 flex flex-col items-center justify-center text-center relative overflow-hidden transition-colors">
+
+                            <div className="mb-8 p-6 rounded-full border-4 border-dashed border-campus-border animate-pulse bg-campus-bg">
                                 <ShieldCheck size={64} className="text-campus-primary" />
                             </div>
-                            <h2 className="text-2xl font-bold mb-2 text-white">Scan ID Card</h2>
-                            <p className="text-white/70 mb-8">Tap card on the reader to mark entry.</p>
+
+                            {/* Text colors are now automatic (campus-text) instead of hardcoded white */}
+                            <h2 className="text-2xl font-bold mb-2 text-campus-text">Scan ID Card</h2>
+                            <p className="text-campus-secondary mb-8">Tap card on the reader to mark entry.</p>
+
                             <form onSubmit={handleScan} className="w-full">
-                                <input ref={searchInputRef} type="text" value={scannedId} onChange={e => setScannedId(e.target.value)} placeholder="Waiting..." autoFocus
-                                       className="w-full bg-white/10 text-white text-xl py-4 text-center rounded-xl border border-white/20 outline-none focus:border-white transition" />
+                                <input
+                                    ref={searchInputRef}
+                                    type="text"
+                                    value={scannedId}
+                                    onChange={e => setScannedId(e.target.value)}
+                                    placeholder="Waiting..."
+                                    autoFocus
+                                    className="w-full bg-campus-bg text-campus-text text-xl py-4 text-center rounded-xl border border-campus-border outline-none focus:border-campus-primary transition placeholder-campus-secondary"
+                                />
                             </form>
                         </div>
                     </div>
@@ -83,7 +96,7 @@ const Attendance = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <span className="inline-flex items-center gap-1 text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-lg"><UserCheck size={12}/> Entered</span>
+                                            <span className="inline-flex items-center gap-1 text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-lg border border-green-200"><UserCheck size={12}/> Entered</span>
                                         </td>
                                     </tr>
                                 ))}
