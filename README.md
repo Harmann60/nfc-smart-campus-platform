@@ -1,9 +1,5 @@
 # 🚀 Identa – AI-Driven Smart Campus Engagement Platform
 
-![Status](https://img.shields.io/badge/Status-Prototype_Development-yellow)
-![License](https://img.shields.io/badge/License-MIT-blue)
-![SDG](https://img.shields.io/badge/SDG-4_Quality_Education-success)
-
 An IoT-enabled, SaaS-based Smart Campus Platform designed to intelligently manage attendance, canteen payments, library automation, and learning engagement analytics using BLE-based proximity validation and real-time backend processing. 
 
 *Developed as part of Project-Based Learning (PBL).*
@@ -97,13 +93,6 @@ The platform follows a robust 5-layer architecture:
 - **Secure Communication:** Encrypted API payloads.
 
 ---
-
-## 📈 Project Status: `🟡 Prototype Development Phase`
-- [x] BLE architecture design completed.
-- [x] Backend module structure designed.
-- [x] Engagement model defined.
-- [ ] API Development (In Progress).
-- [ ] ESP32 Proximity Calibration.
 
 ## 🔮 Future Scope
 - AI-based predictive engagement modeling.
