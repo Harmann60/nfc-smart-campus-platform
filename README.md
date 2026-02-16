@@ -1,115 +1,124 @@
-# NFC-Based Smart Campus Platform (SaaS)
+# 🚀 Identa – AI-Driven Smart Campus Engagement Platform
 
-A SaaS-based Smart Campus system that uses NFC-enabled student ID cards to manage **canteen payments, attendance tracking, and library automation** through a unified platform.
+![Status](https://img.shields.io/badge/Status-Prototype_Development-yellow)
+![License](https://img.shields.io/badge/License-MIT-blue)
+![SDG](https://img.shields.io/badge/SDG-4_Quality_Education-success)
 
-This project is developed as part of our **Project-Based Learning (PBL)** coursework.
+An IoT-enabled, SaaS-based Smart Campus Platform designed to intelligently manage attendance, canteen payments, library automation, and learning engagement analytics using BLE-based proximity validation and real-time backend processing. 
 
----
-
-## 🚀 Project Overview
-
-Educational institutions often rely on separate systems for attendance, library management, and canteen payments. These systems are either manual or poorly integrated, leading to inefficiencies, long queues, and lack of centralized control.
-
-This project proposes a **Software-as-a-Service (SaaS)** solution that integrates all three services using **NFC-based student identification**, accessible from any device with a USB NFC reader.
+*Developed as part of Project-Based Learning (PBL).*
 
 ---
 
-## 🎯 Key Features
+## 🧠 Project Vision
 
-- NFC-based student identification
-- Cashless canteen payments using a digital wallet
-- Automated attendance marking
-- Library book issue and return tracking
-- Web-based admin dashboard
-- Centralized backend and database
-- Platform-independent (Windows, Linux, macOS)
-- Scalable SaaS architecture
+Traditional campus systems treat attendance, library, and payments as isolated services. Furthermore, attendance only tracks physical presence, not actual student engagement.
+
+**Identa transforms attendance into intelligent engagement monitoring.** We integrate IoT-based proximity validation with real-time analytics to classify student engagement, preventing proxy attendance and providing actionable insights to faculty and parents.
 
 ---
 
-## 🏗️ System Architecture
+## 🎯 Core Objectives
 
-All business logic, security, and data storage are handled on the backend.  
-Client devices act only as secure interfaces.
+- **Prevent Proxy Attendance:** Utilize BLE-based proximity validation to ensure students are actually in the classroom.
+- **Track True Engagement:** Combine attendance data with quiz performance for intelligent engagement classification.
+- **Unified SaaS Platform:** Integrate canteen, library, and academic tracking into one seamless ecosystem.
+- **Actionable Insights:** Enable real-time analytics dashboards for faculty and parents.
+- **Future-Proof:** Build a 5G-ready, highly scalable architecture.
+
+---
+
+## 🏗️ System Architecture 
+
+The platform follows a robust 5-layer architecture:
+
+1. **User Layer:** Student Mobile App, Faculty Dashboard, Parent Dashboard.
+2. **IoT Layer:** ESP32 BLE Classroom Beacons, Smart Gate Nodes (WiFi-enabled).
+3. **Validation Layer:** Time-window verification, RSSI-based proximity validation, Enrollment authentication.
+4. **Backend Layer:** REST APIs, functional modules (Attendance, Quiz, Library, Wallet), PostgreSQL Database.
+5. **Analytics Layer:** Engagement classification engine, Risk detection, Faculty insights.
 
 ---
 
 ## 🧰 Tech Stack
 
-### Backend
-- Python
-- FastAPI
-- SQLite / PostgreSQL
-- REST APIs
+**Backend**
+- Python 🐍
+- FastAPI ⚡
+- PostgreSQL 🐘
 
-### Frontend
-- HTML, CSS, JavaScript
-- React (planned)
+**IoT**
+- ESP32 (BLE + WiFi) 📡
+- BLE Beacon Mode & RSSI Proximity Detection
 
-### NFC Integration
-- USB NFC Reader (ACR122U / compatible)
-- Python NFC libraries
+**Frontend (Planned)**
+- React ⚛️
+- Web Dashboards
 
-### Deployment (Planned)
-- Docker
-- Cloud hosting (AWS / Render / Railway)
-
----
-
-## 🧪 Modules
-
-### 1. Canteen Module
-- Item selection
-- NFC-based payment
-- Wallet balance deduction
-- Transaction logging
-
-### 2. Attendance Module
-- Tap-based attendance marking
-- Time-bound validation
-- Attendance reports
-
-### 3. Library Module
-- Book issue/return using NFC
-- Due date tracking
-- Student-library mapping
+**Deployment (Planned)**
+- Docker 🐳
+- Cloud Hosting (AWS / Render)
 
 ---
 
-## 🔐 Security Considerations
+## 📚 Functional Modules
 
-- No sensitive data stored on NFC cards
-- NFC cards used only for UID identification
-- All validations handled on backend
-- Role-based access control (planned)
+### 📍 Attendance Module
+- BLE-based classroom proximity detection.
+- Time-window validation.
+- Proxy-resistant architecture.
+
+### 📊 Engagement Analytics Module
+- Attendance + Quiz-based classification.
+- Student performance insights.
+- Early risk detection for struggling students.
+
+### 🏫 Library Module
+- Digital student verification.
+- Book issue/return logging.
+- Due-date management.
+
+### 💳 Canteen Module
+- Wallet-based transactions.
+- Digital transaction logs.
+- Centralized monitoring.
+
+### 👨‍👩‍👧 Parent Dashboard
+- Automated attendance reports.
+- Academic engagement score tracking.
+- Expense and wallet monitoring.
 
 ---
 
-## 👥 Team Members
-
-- **Harman**  
-- **Jalaj**  
-
----
-
-## 📅 Project Status
-
-🟡 In Development  
-Currently implementing core SaaS backend and NFC integration.
+## 🔐 Security & Privacy
+- **No Sensitive Data on Edge Devices:** Devices only broadcast/scan UUIDs.
+- **Backend-based Validation:** All logic and verification happen securely on the server.
+- **RBAC:** Strict Role-Based Access Control for students, faculty, and admins.
+- **Secure Communication:** Encrypted API payloads.
 
 ---
 
-## 📌 Future Scope
+## 📈 Project Status: `🟡 Prototype Development Phase`
+- [x] BLE architecture design completed.
+- [x] Backend module structure designed.
+- [x] Engagement model defined.
+- [ ] API Development (In Progress).
+- [ ] ESP32 Proximity Calibration.
 
-- Mobile application
-- Analytics dashboard
-- Integration with ERP systems
-- Biometric + NFC hybrid authentication
-- Multi-campus SaaS deployment
+## 🔮 Future Scope
+- AI-based predictive engagement modeling.
+- Real-time anomaly detection.
+- 5G campus-scale deployment.
+- Edge computing integration.
+
+---
+
+## 👥 Team
+- **Harman** – Backend Engineer
+- **Jalaj** – Product Engineer
+- **Gauri** – Product Designer & Documentation Lead
 
 ---
 
 ## 📜 License
-
-This project is developed for academic purposes under MIT License 
-
+This is an Academic Project distributed under the [MIT License](LICENSE).
