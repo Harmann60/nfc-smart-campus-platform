@@ -2,44 +2,41 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 
 const User = sequelize.define('User', {
-    user_id: {
+    id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
     name: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false
     },
-    user_email: {
+    // 👇 ADDED THESE BACK FOR YOUR LOGIN PAGE
+    email: {
         type: DataTypes.STRING,
         unique: true,
-        allowNull: false
+        allowNull: true
     },
-    password_hash: {
+    password: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     role: {
         type: DataTypes.STRING,
-        defaultValue: 'student'
+        defaultValue: 'student' // 'student', 'faculty', 'admin'
     },
-    // 💰 NEW: Wallet Balance
-    wallet_balance: {
-        type: DataTypes.FLOAT,
-        defaultValue: 0.0
-    },
-    rfid_uid: {
+    // 👇 IDENTA BLE SYSTEM FIELDS
+    ble_mac: {
         type: DataTypes.STRING,
         unique: true,
         allowNull: true
     },
-    is_active: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true
+    engagement_score: {
+        type: DataTypes.INTEGER,
+        defaultValue: 100
     }
 }, {
-    timestamps: false
+    timestamps: true
 });
 
 module.exports = User;
